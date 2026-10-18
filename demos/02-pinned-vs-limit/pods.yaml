@@ -1,0 +1,73 @@
+# Demo 02 pods. Guaranteed QoS. run.sh creates the namespace and the 'lockpy' ConfigMap.
+---
+apiVersion: v1
+kind: Pod
+metadata: {name: a-plain-over, namespace: kv-demo-pinned, labels: {app: memlock}}
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: t
+    image: python:3.12-slim
+    command: ["python3", "-u", "/t/lock.py"]
+    env: [{name: MODE, value: "plain"}, {name: MAP, value: "shared"}, {name: TOTAL_MB, value: "768"}]
+    resources:
+      requests: {cpu: 100m, memory: 512Mi}
+      limits: {cpu: 100m, memory: 512Mi}
+    securityContext: {capabilities: {add: []}}
+    volumeMounts: [{name: t, mountPath: /t}]
+  volumes: [{name: t, configMap: {name: lockpy}}]
+---
+apiVersion: v1
+kind: Pod
+metadata: {name: b-lock-under, namespace: kv-demo-pinned, labels: {app: memlock}}
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: t
+    image: python:3.12-slim
+    command: ["python3", "-u", "/t/lock.py"]
+    env: [{name: MODE, value: "lock"}, {name: MAP, value: "shared"}, {name: TOTAL_MB, value: "384"}]
+    resources:
+      requests: {cpu: 100m, memory: 512Mi}
+      limits: {cpu: 100m, memory: 512Mi}
+    securityContext: {capabilities: {add: []}}
+    volumeMounts: [{name: t, mountPath: /t}]
+  volumes: [{name: t, configMap: {name: lockpy}}]
+---
+apiVersion: v1
+kind: Pod
+metadata: {name: c-lock-over, namespace: kv-demo-pinned, labels: {app: memlock}}
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: t
+    image: python:3.12-slim
+    command: ["python3", "-u", "/t/lock.py"]
+    env: [{name: MODE, value: "lock"}, {name: MAP, value: "shared"}, {name: TOTAL_MB, value: "768"}]
+    resources:
+      requests: {cpu: 100m, memory: 512Mi}
+      limits: {cpu: 100m, memory: 512Mi}
+    securityContext: {capabilities: {add: [IPC_LOCK]}}
+    volumeMounts: [{name: t, mountPath: /t}]
+  volumes: [{name: t, configMap: {name: lockpy}}]
+---
+apiVersion: v1
+kind: Pod
+metadata: {name: d-lock-under-priv, namespace: kv-demo-pinned, labels: {app: memlock}}
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: t
+    image: python:3.12-slim
+    command: ["python3", "-u", "/t/lock.py"]
+    env: [{name: MODE, value: "lock"}, {name: MAP, value: "private"}, {name: TOTAL_MB, value: "384"}]
+    resources:
+      requests: {cpu: 100m, memory: 512Mi}
+      limits: {cpu: 100m, memory: 512Mi}
+    securityContext: {capabilities: {add: []}}
+    volumeMounts: [{name: t, mountPath: /t}]
+  volumes: [{name: t, configMap: {name: lockpy}}]

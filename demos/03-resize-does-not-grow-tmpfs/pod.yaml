@@ -1,0 +1,29 @@
+# Demo 03: raise the pod memory limit in place and check whether the
+# already-mounted memory emptyDir at /dev/shm grows with it.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kv-demo-resize
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tier
+  namespace: kv-demo-resize
+spec:
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: engine
+    image: python:3.12-slim
+    command: ["sleep", "infinity"]
+    resources:
+      requests: {cpu: 100m, memory: 256Mi}
+      limits: {cpu: 100m, memory: 256Mi}
+    resizePolicy:
+    - {resourceName: memory, restartPolicy: NotRequired}
+    - {resourceName: cpu, restartPolicy: NotRequired}
+    volumeMounts:
+    - {name: shm, mountPath: /dev/shm}
+  volumes:
+  - name: shm
+    emptyDir: {medium: Memory}   # no sizeLimit: tmpfs size comes from the pod memory limit

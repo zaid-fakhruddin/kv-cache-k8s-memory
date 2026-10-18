@@ -1,0 +1,32 @@
+server version: v1.37.0
+--- before resize
+spec limit:       256Mi
+status limit:     256Mi
+restartCount:     0
+container start:  2026-10-18T18:06:56Z
+memory.max:       268435456
+df -h /dev/shm:
+  Filesystem      Size  Used Avail Use% Mounted on
+  tmpfs           256M     0  256M   0% /dev/shm
+mount options:    tmpfs /dev/shm tmpfs rw,relatime,size=262144k,noswap 0 0
+
++ kubectl patch pod tier --subresource resize: memory 256Mi -> 1Gi
+pod/tier patched
+pod conditions: []
+
+--- after resize
+spec limit:       1Gi
+status limit:     1Gi
+restartCount:     0
+container start:  2026-10-18T18:06:56Z
+memory.max:       1073741824
+df -h /dev/shm:
+  Filesystem      Size  Used Avail Use% Mounted on
+  tmpfs           256M     0  256M   0% /dev/shm
+mount options:    tmpfs /dev/shm tmpfs rw,relatime,size=262144k,noswap 0 0
+
++ write 400 MiB to /dev/shm (more than the old 256Mi tmpfs size, less than the new 1Gi limit)
+write stopped after about 256 MiB: [Errno 28] No space left on device
+  Filesystem      Size  Used Avail Use% Mounted on
+  tmpfs           256M  256M     0 100% /dev/shm
+restartCount after write: 0

@@ -1,0 +1,58 @@
+# Demo 01: a "KV tier" file in a memory-backed /dev/shm outlives the container.
+# Each start writes a new 300 MiB tier file, holds it for a few seconds, then
+# exits with code 1 (a simulated engine crash). The emptyDir belongs to the pod,
+# so the files from earlier starts stay, and their pages stay charged to the pod.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kv-demo-shm
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tier-writer
+  namespace: kv-demo-shm
+data:
+  writer.py: |
+    import glob, os, time, uuid
+
+    def cur_mib():
+        return int(open("/sys/fs/cgroup/memory.current").read()) >> 20
+
+    old = glob.glob("/dev/shm/kv-tier-*")
+    print(f"start: leftover tier files={len(old)} container memory.current={cur_mib()}MiB", flush=True)
+    path = f"/dev/shm/kv-tier-{uuid.uuid4().hex[:6]}"
+    buf = b"\x01" * (1 << 20)  # reuse one 1 MiB buffer, no large temporary
+    with open(path, "wb") as f:
+        for i in range(300):
+            f.write(buf)
+            if (i + 1) % 100 == 0:
+                f.flush()
+                print(f"  wrote {i + 1}MiB to {path}; container memory.current={cur_mib()}MiB", flush=True)
+    print("tier written; holding 8s, then crashing", flush=True)
+    time.sleep(8)
+    os._exit(1)
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: retained-tier
+  namespace: kv-demo-shm
+spec:
+  restartPolicy: Always
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: engine
+    image: python:3.12-slim
+    command: ["python3", "-u", "/app/writer.py"]
+    resources:
+      requests: {cpu: 250m, memory: 512Mi}
+      limits: {cpu: 250m, memory: 512Mi}
+    volumeMounts:
+    - {name: shm, mountPath: /dev/shm}
+    - {name: app, mountPath: /app}
+  volumes:
+  - name: shm
+    emptyDir: {medium: Memory}
+  - name: app
+    configMap: {name: tier-writer}

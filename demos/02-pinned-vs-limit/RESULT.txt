@@ -1,0 +1,47 @@
+waiting 60s for allocations and for kubelet stats to refresh...
+
+=== a-plain-over ===
+env:     ["MODE=plain","MAP=shared","TOTAL_MB=768"]
+limit:   512Mi  caps.add: null
+state:   {"state":"terminated","reason":"OOMKilled","exitCode":137}
+--- log
+  mode=plain map=shared memory.max=536870912 swap.max=0 RLIMIT_MEMLOCK=-1,-1 CAP_IPC_LOCK=no
+  held=128MiB memory.current=133MiB anon=4MiB shmem=128MiB unevictable=0MiB
+  held=256MiB memory.current=262MiB anon=4MiB shmem=256MiB unevictable=0MiB
+  held=384MiB memory.current=391MiB anon=4MiB shmem=384MiB unevictable=0MiB
+
+=== b-lock-under ===
+env:     ["MODE=lock","MAP=shared","TOTAL_MB=384"]
+limit:   512Mi  caps.add: null
+state:   {"state":"running","reason":null,"exitCode":null}
+--- log
+  mode=lock map=shared memory.max=536870912 swap.max=0 RLIMIT_MEMLOCK=-1,-1 CAP_IPC_LOCK=no
+  held=128MiB memory.current=136MiB anon=4MiB shmem=128MiB unevictable=128MiB
+  held=256MiB memory.current=265MiB anon=4MiB shmem=256MiB unevictable=256MiB
+  held=384MiB memory.current=391MiB anon=4MiB shmem=384MiB unevictable=384MiB
+  DONE holding 384 MiB
+--- kubelet stats/summary (container memory)
+  usageBytes=391MiB workingSetBytes=391MiB rssBytes=4MiB
+
+=== c-lock-over ===
+env:     ["MODE=lock","MAP=shared","TOTAL_MB=768"]
+limit:   512Mi  caps.add: ["IPC_LOCK"]
+state:   {"state":"terminated","reason":"OOMKilled","exitCode":137}
+--- log
+  mode=lock map=shared memory.max=536870912 swap.max=0 RLIMIT_MEMLOCK=-1,-1 CAP_IPC_LOCK=yes
+  held=128MiB memory.current=133MiB anon=4MiB shmem=128MiB unevictable=128MiB
+  held=256MiB memory.current=262MiB anon=4MiB shmem=256MiB unevictable=256MiB
+  held=384MiB memory.current=392MiB anon=4MiB shmem=384MiB unevictable=384MiB
+
+=== d-lock-under-priv ===
+env:     ["MODE=lock","MAP=private","TOTAL_MB=384"]
+limit:   512Mi  caps.add: null
+state:   {"state":"running","reason":null,"exitCode":null}
+--- log
+  mode=lock map=private memory.max=536870912 swap.max=0 RLIMIT_MEMLOCK=-1,-1 CAP_IPC_LOCK=no
+  held=128MiB memory.current=136MiB anon=132MiB shmem=0MiB unevictable=128MiB
+  held=256MiB memory.current=264MiB anon=260MiB shmem=0MiB unevictable=256MiB
+  held=384MiB memory.current=393MiB anon=388MiB shmem=0MiB unevictable=384MiB
+  DONE holding 384 MiB
+--- kubelet stats/summary (container memory)
+  usageBytes=390MiB workingSetBytes=389MiB rssBytes=388MiB

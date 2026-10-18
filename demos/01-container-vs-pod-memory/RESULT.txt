@@ -1,0 +1,60 @@
+pod UID:        c10e1186-1832-4f04-b3fe-d97f37b8af9d
+QoS class:      Guaranteed
+pod cgroup:     /sys/fs/cgroup/kubelet.slice/kubelet-kubepods.slice/kubelet-kubepods-podc10e1186_1832_4f04_b3fe_d97f37b8af9d.slice
+pod memory.max: 536870912
+
+t(s)  restarts  state                  POD current/shmem MiB    CONTAINER current/shmem MiB
+0     0         running                58 / 43                  91 / 68                 
+4     0         running                324 / 300                323 / 300               
+7     0         running                324 / 300                323 / 300               
+10    1         running                511 / 500                211 / 200               
+13    1         terminated/OOMKilled   502 / 500                - / -                   
+17    1         terminated/OOMKilled   502 / 500                - / -                   
+20    1         terminated/OOMKilled   502 / 500                - / -                   
+23    2         running                512 / 500                - / -                   
+26    2         terminated/OOMKilled   502 / 500                - / -                   
+29    2         terminated/OOMKilled   502 / 500                - / -                   
+33    2         terminated/OOMKilled   502 / 500                - / -                   
+36    2         terminated/OOMKilled   502 / 500                - / -                   
+39    2         terminated/OOMKilled   502 / 500                - / -                   
+42    2         terminated/OOMKilled   502 / 500                - / -                   
+45    2         terminated/OOMKilled   502 / 500                - / -                   
+49    2         terminated/OOMKilled   502 / 500                - / -                   
+52    3         running                511 / 500                9 / 0                   
+55    3         running                511 / 500                9 / 0                   
+58    3         running                511 / 500                9 / 0                   
+62    3         terminated/OOMKilled   502 / 500                - / -                   
+65    3         terminated/OOMKilled   502 / 500                - / -                   
+68    3         terminated/OOMKilled   502 / 500                - / -                   
+72    3         terminated/OOMKilled   502 / 500                - / -                   
+75    3         terminated/OOMKilled   502 / 500                - / -                   
+78    3         terminated/OOMKilled   502 / 500                - / -                   
+81    3         terminated/OOMKilled   502 / 500                - / -                   
+84    3         terminated/OOMKilled   502 / 500                - / -                   
+88    3         terminated/OOMKilled   502 / 500                - / -                   
+91    3         terminated/OOMKilled   502 / 500                - / -                   
+94    3         terminated/OOMKilled   502 / 500                - / -                   
+97    3         terminated/OOMKilled   502 / 500                - / -                   
+
+== summary ==
+restartCount:            3
+current state:           {"terminated":{"containerID":"containerd://66031b6c57c9c46e8817927665c1533083afd4eb03355491308c90b0bc612ea3","exitCode":137,"finishedAt":"2026-10-18T18:02:10Z","reason":"OOMKilled","startedAt":"2026-10-18T18:02:00Z"}}
+last termination reason: OOMKilled (exit 137)
+pod UID unchanged:       yes
+pod memory.current:      502 MiB
+pod memory.stat shmem:   500 MiB
+pod memory.events:       low 0 high 0 max 21156 oom 3 oom_kill 6 oom_group_kill 3 
+tier files left in the pod's emptyDir (on the node):
+  total 512696
+  -rw-r--r-- 1 root root 209899520 Oct 18 18:01 kv-tier-5d0591
+  -rw-r--r-- 1 root root 314572800 Oct 18 18:01 kv-tier-b29ca7
+  -rw-r--r-- 1 root root    528384 Oct 18 18:01 kv-tier-df3995
+
+== container log (most recent start) ==
+
+== events ==
+Scheduled   Successfully assigned kv-demo-shm/retained-tier to kv-validate-control-plane
+Pulled      Container image "python:3.12-slim" already present on machine and can be accessed by the pod
+Created     Container created
+Started     Container started
+BackOff     Back-off restarting failed container engine in pod retained-tier_kv-demo-shm(c10e1186-1832-4f04-b3fe-d97f37b8af9d)
