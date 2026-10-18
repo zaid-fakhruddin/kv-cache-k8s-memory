@@ -1,0 +1,9 @@
+{"tier": "20", "kind": "returning_long", "n": 20, "ttft_p50": 15972.7, "ttft_p90": 26955.1, "ttft_max": 29388.0}
+{"tier": "20", "kind": "new_long", "n": 20, "ttft_p50": 17972.2, "ttft_p90": 29045.0, "ttft_max": 31417.4}
+{"tier": "20", "kind": "short", "n": 40, "ttft_p50": 16473.8, "ttft_p90": 28293.5, "ttft_max": 30664.2}
+{"tier": "0", "kind": "returning_long", "n": 20, "ttft_p50": 19031.9, "ttft_p90": 30003.0, "ttft_max": 32439.8}
+{"tier": "0", "kind": "new_long", "n": 20, "ttft_p50": 21026.5, "ttft_p90": 32089.0, "ttft_max": 34470.6}
+{"tier": "0", "kind": "short", "n": 40, "ttft_p50": 19527.4, "ttft_p90": 31341.5, "ttft_max": 33719.6}
+{"tier": "12", "kind": "returning_long", "n": 20, "ttft_p50": 19385.4, "ttft_p90": 30397.8, "ttft_max": 32837.5}
+{"tier": "12", "kind": "new_long", "n": 20, "ttft_p50": 21387.3, "ttft_p90": 32486.5, "ttft_max": 34860.5}
+{"tier": "12", "kind": "short", "n": 40, "ttft_p50": 19885.4, "ttft_p90": 31740.4, "ttft_max": 34108.4}
